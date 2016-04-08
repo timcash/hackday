@@ -1,9 +1,10 @@
 /**
  * Lib
  */
-
 // Single - All
 module.exports.singleAll = function(event, cb) {
+
+  console.log(event.text);
 
   var response = {
     message: 'Your Serverless function ran successfully via the \''
@@ -11,7 +12,17 @@ module.exports.singleAll = function(event, cb) {
     + '\' method!'
   };
 
-  return cb(null, response);
+  db.put('users', 'kates-user-id', {
+    "name": "Kate Robbins",
+    "hometown": "Portland, OR",
+    "twitter": "@katesfaketwitter"
+  })
+  .then(function (res) {
+    cb(null, res);
+  })
+  .fail(function (err) {
+    cb(err, null);
+  });
 };
 
 // Multi - Create

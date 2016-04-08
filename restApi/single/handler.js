@@ -8,12 +8,41 @@
  */
 
 // Require Logic
-var lib = require('../lib');
+var db = require('orchestrate')('77c5a75f-0de8-46ba-982a-5d99af68220a')
 
 // Lambda Handler
 module.exports.handler = function(event, context) {
 
-  lib.singleAll(event, function(error, response) {
-    return context.done(error, response);
-  });
+  //
+  // var response = {
+  //   message: 'Your Serverless function ran successfully via the \''
+  //   + event.httpMethod
+  //   + '\' method!'
+  // };
+  console.log(event)
+  if(!event.search) {
+    db.put("notes", event.noteid, {
+      "noteid": event.noteid,
+      "text": event.text,
+      "author": event.author,
+      "clipid": event.clipid
+    })
+    .then(function (res) {
+      context.done(null, JSON.stringify(event));
+    })
+    .fail(function (err) {
+      context.done(err, null);
+    });
+  }
+  else {
+
+    db.search('notes', event.search)
+    .then(function (res) {
+      context.done(null, res);
+    })
+    .fail(function (err) {
+      context.done(err, null);
+    });
+  }
+
 };
